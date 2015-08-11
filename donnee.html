@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+ <style>
+  #byte_content {
+    margin: 5px 0;
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  #byte_range { margin-top: 5px; }
+</style>
+
+<input type="file" id="files" name="file" /> Read bytes:
+<span class="readBytesButtons">
+
+  <button>entire file</button>
+</span>
+<div id="byte_range"></div>
+<div id="byte_content"></div>
+
+<script>
+  function readBlob(opt_startByte, opt_stopByte) {
+
+    var files = document.getElementById('files').files;
+    if (!files.length) {
+      alert('Please select a file!');
+      return;
+    }
+
+    var file = files[0];
+    var start = parseInt(opt_startByte) || 0;
+    var stop = parseInt(opt_stopByte) || file.size - 1;
+
+    var reader = new FileReader();
+
+    // If we use onloadend, we need to check the readyState.
+    reader.onloadend = function(evt) {
+      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+        document.getElementById('byte_content').textContent = evt.target.result;
+		var donn=evt.target.result;
+		//alert(donn);
+		var elem=donn.split('\n');
+		
+		
+	//alert(elem[2]);
+	alert(elem[0]);
+	
+	
+	
+	var X= new Array();
+	var Y= new Array();;
+	var Z= new Array();;
+	var temps= new Array();
+	
+	var a=1;
+	var b=1;
+	var c=1;
+	var d=1;
+	
+	for(var i=0; i<elem.length; i++)
+	{
+	var nombre = elem[i].split(" ");
+	//alert(nombre[2]);
+	
+	temps[i] = nombre[3];
+	Z[i] = nombre[2];
+	Y[i] = nombre[1];
+	X[i] = nombre[0];
+	
+	}
+	alert("X="+X);
+	
+	     //calcul de la moyenne des X
+	 
+		 moyenneX= E(X);
+		 alert("E(x)="+moyenneX);
+		 
+		 // calcul de E[X²]
+		 var moyenneX2=E2(X);
+		alert("E(x²)="+moyenneX2);
+		
+		// calcul variance
+		var variance= moyenneX2-Math.pow(moyenneX,2);
+		alert("variance de X="+ variance);
+		
+		//Calcul ecart-type de X
+		var ecarttype= Math.sqrt(variance);
+        alert("l'écart type de X:" + ecarttype);
+        
+        
+		// a ajouter les autres truc Y,Z,Temps----------------------------------------------------
+		
+		
+        document.getElementById('byte_range').textContent =
+            ['Read bytes: ', start + 1, ' - ', stop + 1,
+             ' of ', file.size, ' byte file'].join('');
+      }
+    };
+
+    var blob = file.slice(start, stop + 1);
+	//alert(blob);
+    reader.readAsBinaryString(blob);
+  }
+  
+function E2(X){
+
+var sumX=0;
+	var l=X.length;
+	for (var i=0; i<l; i++) 
+		{
+		sumX=sumX+Math.pow(parseFloat(X[i]),2);
+		
+}
+var moyenneX=sumX/l;
+return moyenneX;
+};
+
+  
+function E(X){
+
+var sumX=0;
+	var l=X.length;
+	for (var i=0; i<l; i++) 
+		{
+		sumX=sumX+parseFloat(X[i]);
+		
+}
+var moyenneX=sumX/l;
+return moyenneX;
+};
+
+
+
+
+  document.querySelector('.readBytesButtons').addEventListener('click', function(evt) {
+    if (evt.target.tagName.toLowerCase() == 'button') {
+      var startByte = evt.target.getAttribute('data-startbyte');
+      var endByte = evt.target.getAttribute('data-endbyte');
+	  
+      readBlob(startByte, endByte);
+    }
+  }, false);
+</script>
+</html>
